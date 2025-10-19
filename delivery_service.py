@@ -1,46 +1,46 @@
 # Номер посылки 145825277
-from typing import List
-
-def min_platforms(weights: List[int], limit: int) -> int:
+def min_platforms(robot_weights: list[int], max_capacity: int) -> int:
     """
     Определяет минимальное количество платформ для перевозки роботов.
     
+    Алгоритм: метод двух указателей на отсортированном списке весов.
+    - Сортируем веса роботов
+    - Используем два указателя: на самого легкого и самого тяжелого робота
+    - Если оба робота помещаются на платформу - перевозим их вместе
+    - Если нет - перевозим только тяжелого робота
+    - Считаем количество использованных платформ
+    
     Args:
-        weights: Список весов роботов
-        limit: Максимальная грузоподъемность платформы
+        robot_weights: Список весов роботов
+        max_capacity: Максимальная грузоподъемность платформы
         
     Returns:
         Минимальное количество платформ
     """
-    # Сортируем веса для применения метода двух указателей
-    weights.sort()
+    sorted_weights = sorted(robot_weights)
     
-    left: int = 0
-    right: int = len(weights) - 1
-    platforms: int = 0
+    light_robot_index = 0
+    heavy_robot_index = len(sorted_weights) - 1
+    platforms_count = 0
     
-    while left <= right:
-        # Если самый тяжелый и самый легкий робот помещаются на одну платформу
-        if weights[left] + weights[right] <= limit:
-            left += 1  # Забираем легкого робота
-            right -= 1  # Забираем тяжелого робота
-        else:
-            # Если не помещаются, берем только тяжелого робота
-            right -= 1
-        
-        platforms += 1
+    while light_robot_index <= heavy_robot_index:
+        light_weight = sorted_weights[light_robot_index]
+        heavy_weight = sorted_weights[heavy_robot_index]
+
+        if light_weight + heavy_weight <= max_capacity:
+            light_robot_index += 1
+
+        heavy_robot_index -= 1
+        platforms_count += 1
     
-    return platforms
+    return platforms_count
 
 
 def main() -> None:
-    # Чтение входных данных
-    weights = list(map(int, input().split()))
-    limit = int(input())
+    robot_weights = [int(x) for x in input().split()]
+    max_capacity = int(input())
     
-    # Вычисление результата
-    result = min_platforms(weights, limit)
-    print(result)
+    print(min_platforms(robot_weights, max_capacity))
 
 
 if __name__ == "__main__":
